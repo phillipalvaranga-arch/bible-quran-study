@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bible &amp; Quran Study</title>
+<meta name="description" content="A comparative study and apologetics app: search the Quran and the Bible, explore cited weak points and controversies, and compare with Scripture.">
+<meta name="theme-color" content="#0b1a33">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.ico" sizes="any">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BQ Study">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/"><img src="icons/favicon.png" alt=""><span>Bible &amp; Quran Study</span></a>
+  <button id="themeBtn" class="iconbtn" title="Toggle dark / parchment theme" aria-label="Toggle theme">🌓</button>
+</header>
+<nav class="tabs" id="tabs">
+  <a href="#/" data-r="">🏠 Home</a>
+  <a href="#/search" data-r="search">🔍 Search &amp; Reveal</a>
+  <a href="#/topics" data-r="topics">⚖️ Weak Points</a>
+  <a href="#/books" data-r="books">📚 Other Books of Islam</a>
+  <a href="#/surah/1" data-r="surah">📖 Quran</a>
+  <a href="#/bible/Genesis/1" data-r="bible">✝️ Bible</a>
+  <a href="#/compare" data-r="compare">↔️ Compare</a>
+  <a href="#/notes" data-r="notes">📝 Notes</a>
+  <a href="#/quiz" data-r="quiz">🎯 Quiz</a>
+  <a href="#/print" data-r="print">🖨️ Study Sheet</a>
+  <a href="#/sync" data-r="sync">☁️ Sync</a>
+</nav>
+<main id="view" tabindex="-1"><p class="loading">Loading texts…</p></main>
+<div id="modal" class="modal" hidden><div class="modal-card" role="dialog" aria-modal="true"><button class="close iconbtn" id="modalClose" aria-label="Close">✕</button><div id="modalBody"></div></div></div>
+<div id="toast" class="toast" hidden></div>
+<footer class="foot">Quran: Yusuf Ali (1934) &amp; Pickthall (1930) via alquran.cloud · Bible: KJV (public domain) · Hadith quotes from sunnah.com · Study tool for respectful, evidence-based dialogue.</footer>
+<script src="data/topics.js"></script>
+<script src="sync.js"></script>
+<script src="core.js"></script>
+<script src="views.js"></script>
+<script src="views2.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
