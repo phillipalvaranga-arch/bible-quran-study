@@ -23,6 +23,7 @@
     BQ.$$("#tabs a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-r") === (name === "topic" ? "topics" : name)); });
     var on = BQ.$("#tabs a.on"); if (on && on.scrollIntoView) on.scrollIntoView({ inline: "center", block: "nearest" });
     switch (name) {
+      case "kvq": V.kvq(el, p[1], r.params); break;
       case "search": V.search(el, r.params); break;
       case "surah": V.surah(el, p[1], p[2]); break;
       case "bible": V.bible(el, p[1], p[2], p[3]); break;

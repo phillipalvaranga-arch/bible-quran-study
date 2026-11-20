@@ -41,6 +41,7 @@
     (W.BQ_CATS || []).forEach(function (c) { groups[c.group] = groups[c.group] || []; groups[c.group].push(c); });
     el.innerHTML = '<section class="card hero"><h1>Bible &amp; Quran Study</h1><p>Search the Quran and the Bible, examine <b>' + T.length +
       "</b> cited weak points and controversies — in the Quran, Muhammad's life, and the hadith, sira, tafsir and fiqh books — and compare each with the Bible. Every Quran and Bible quotation is pulled live from the full bundled texts: Quran 114 surahs / 6,236 ayahs (Yusuf Ali &amp; Pickthall), KJV 66 books / 31,102 verses.</p>" +
+      '<p class="kvqcta"><a class="btn gold" href="#/kvq">📖 KJV vs Quran — what the King James Bible says, then what the Quran says (' + (W.BQ_COMPARE || []).length + ' topics)</a></p>' +
       '<form id="homeSearch" class="row"><input id="homeQ" placeholder="Search: crucify, Torah, 4:157, John 1:1…" aria-label="Search"><button class="btn gold">🔍 Search &amp; Reveal</button></form>' +
       '<p class="small mute">Analytical and respectful: the goal is honest examination of texts and claims, with Muslim responses included for every point — not hostility toward Muslims.</p></section>' +
       Object.keys(groups).map(function (g) {
@@ -79,6 +80,11 @@
         var hay = [t.title, t.summary, t.analysis, t.responses, (t.tags || []).join(" "), (t.q || []).join(" "), (t.b || []).join(" "), (t.sources || []).map(function (s) { return s.t + " " + (s.quote || ""); }).join(" ")].join(" ").toLowerCase();
         return ts.length && ts.every(function (x) { return hay.indexOf(x) >= 0; }) || hay.indexOf(tq) >= 0;
       });
+      var cm = (W.BQ_COMPARE || []).filter(function (c) {
+        var hay = [c.title, c.cat, c.agree, c.differ, c.matters, c.muslim, c.kjv.join(" "), c.quran.join(" ")].join(" ").toLowerCase();
+        return ts.length && ts.every(function (x) { return hay.indexOf(x) >= 0; }) || hay.indexOf(tq) >= 0;
+      });
+      if (cm.length) html += "<h2>📖 KJV vs Quran comparisons (" + cm.length + ')</h2><div class="grid">' + cm.map(function (c) { return '<a class="card" style="text-decoration:none;color:inherit" href="#/kvq/' + c.id + '"><span class="badge">' + esc(c.cat) + "</span><h3>" + esc(c.title) + '</h3><div class="small mute">KJV ' + esc(c.kjv.slice(0, 2).join("; ")) + " · Quran " + esc(c.quran.slice(0, 2).join("; ")) + "</div></a>"; }).join("") + "</div>";
       if (tm.length) html += "<h2>Weak points &amp; controversies matching “" + esc(q) + "” (" + tm.length + ')</h2><div class="grid">' + tm.slice(0, 24).map(V.topicCard).join("") + "</div>";
       // Reference lookups
       var pq = BQ.parseQ(q), pb = !pq && BQ.B ? BQ.parseB(q) : null;

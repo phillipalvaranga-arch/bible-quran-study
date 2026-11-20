@@ -59,3 +59,9 @@ mark{background:var(--gold);color:#1b1404;border-radius:3px;padding:0 2px}
 .foot{color:var(--mute);font-size:.8rem;text-align:center;padding:18px 12px 30px}
 .loading{color:var(--mute)}
 @media print{.top,.tabs,.foot,.noprint,.toast{display:none!important}body,html{background:#fff;color:#000;font:12pt Georgia,serif}.card,.verse{box-shadow:none;border:1px solid #999;background:#fff;color:#000;break-inside:avoid}.verse .ref{color:#000}a{color:#000}}
+
+.kvq-h{font-size:1.15rem;padding:8px 12px;border-radius:10px;margin:10px 0 4px}
+.kvq-h.kjv{background:var(--b);border-left:5px solid #c9853d}.kvq-h.qur{background:var(--q);border-left:5px solid var(--gold)}
+.cmpbox{border-color:var(--gold)}
+.kvq-col{min-width:0}
+.hero .kvqcta{margin:6px 0 10px}

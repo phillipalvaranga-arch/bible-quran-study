@@ -70,6 +70,7 @@
   };
   function refHref(ref) {
     var m = /^Quran (\d+):(\d+)/.exec(ref); if (m) return "#/surah/" + m[1] + "/" + m[2];
+    if (/^KJV vs Quran: /.test(ref)) { var c = (W.BQ_COMPARE || []).filter(function (x) { return "KJV vs Quran: " + x.title === ref; })[0]; return c ? "#/kvq/" + c.id : "#/kvq"; }
     if (/^Point: /.test(ref)) { var t = BQ.allTopics().filter(function (x) { return "Point: " + x.title === ref; })[0]; return t ? "#/topic/" + t.id : "#/topics"; }
     var p = BQ.B && BQ.parseB(ref); if (p) return BQ.bHref(p.book, p.c, p.a);
     return "#/search?q=" + encodeURIComponent(ref) + "&bible=1";
@@ -112,19 +113,25 @@
         qs.push({ q: "Which Bible passage is the contrast offered for: “" + t.title + "”?", a: t.b[0], opts: shuffle([t.b[0]].concat(wb)), id: t.id });
       }
     });
+    if (!cat || cat === "kvq") (W.BQ_COMPARE || []).forEach(function (c) {
+      var wq = shuffle(W.BQ_COMPARE.filter(function (x) { return x.id !== c.id && x.quran[0] !== c.quran[0] && x.kjv[0] !== c.kjv[0]; })).slice(0, 3);
+      qs.push({ q: "KJV vs Quran — which Quran passage is set beside the Bible on “" + c.title + "”?", a: c.quran[0], opts: shuffle([c.quran[0]].concat(wq.map(function (x) { return x.quran[0]; }))), kvq: c.id });
+      qs.push({ q: "KJV vs Quran — which King James passage is shown first for “" + c.title + "”?", a: c.kjv[0], opts: shuffle([c.kjv[0]].concat(wq.map(function (x) { return x.kjv[0]; }))), kvq: c.id });
+    });
+    if (cat === "kvq") qs = qs.filter(function (x) { return x.kvq; });
     return shuffle(qs);
   }
   V.quiz = function (el, params) {
     var mode = params.mode || "quiz", cat = params.cat || "";
     el.innerHTML = '<h1>🎯 Quiz &amp; Flashcards</h1><div class="row noprint"><a class="btn' + (mode === "quiz" ? " gold" : "") + '" href="#/quiz?mode=quiz&cat=' + cat + '">Quiz</a><a class="btn' + (mode === "cards" ? " gold" : "") + '" href="#/quiz?mode=cards&cat=' + cat + '">Flashcards</a><select id="qCat" style="flex:1 1 200px"><option value="">All categories</option>' +
-      (W.BQ_CATS || []).map(function (c) { return '<option value="' + c.id + '"' + (c.id === cat ? " selected" : "") + ">" + c.icon + " " + esc(c.name) + "</option>"; }).join("") + '</select></div><div id="qz"></div>';
+      '<option value="kvq"' + (cat === "kvq" ? " selected" : "") + '>📖 KJV vs Quran</option>' + (W.BQ_CATS || []).map(function (c) { return '<option value="' + c.id + '"' + (c.id === cat ? " selected" : "") + ">" + c.icon + " " + esc(c.name) + "</option>"; }).join("") + '</select></div><div id="qz"></div>';
     BQ.$("#qCat").onchange = function () { location.hash = "#/quiz?mode=" + mode + "&cat=" + this.value; };
     var box = BQ.$("#qz");
     if (mode === "cards") {
-      var cards = shuffle((W.BQ_TOPICS || []).filter(function (t) { return !cat || t.cat === cat; })), i = 0, flipped = false;
+      var cards = shuffle(cat === "kvq" ? (W.BQ_COMPARE || []).map(function (c) { return { id: c.id, kvq: true, title: "KJV vs Quran: " + c.title, summary: c.differ, q: c.quran, b: c.kjv }; }) : (W.BQ_TOPICS || []).filter(function (t) { return !cat || t.cat === cat; })), i = 0, flipped = false;
       var draw = function () {
         var t = cards[i];
-        box.innerHTML = '<p class="mute">Card ' + (i + 1) + " of " + cards.length + ' — tap the card to flip</p><div class="card flash" id="fc">' + (flipped ? "<div><p>" + esc(t.summary) + '</p><p class="small mute">Quran ' + esc((t.q || []).join(", ")) + " · Bible " + esc((t.b || []).slice(0, 3).join(", ")) + "</p></div>" : "<b>" + esc(t.title) + "</b>") + '</div><div class="row"><button class="btn" id="fp">◀ Prev</button><button class="btn gold" id="ff">Flip</button><button class="btn" id="fn">Next ▶</button><button class="btn" data-topic="' + esc(t.id) + '">Open card</button></div>';
+        box.innerHTML = '<p class="mute">Card ' + (i + 1) + " of " + cards.length + ' — tap the card to flip</p><div class="card flash" id="fc">' + (flipped ? "<div><p>" + esc(t.summary) + '</p><p class="small mute">Quran ' + esc((t.q || []).join(", ")) + " · Bible " + esc((t.b || []).slice(0, 3).join(", ")) + "</p></div>" : "<b>" + esc(t.title) + "</b>") + '</div><div class="row"><button class="btn" id="fp">◀ Prev</button><button class="btn gold" id="ff">Flip</button><button class="btn" id="fn">Next ▶</button>' + (t.kvq ? '<a class="btn" href="#/kvq/' + t.id + '">Open comparison</a>' : '<button class="btn" data-topic="' + esc(t.id) + '">Open card</button>') + '</div>';
         BQ.$("#fc").onclick = BQ.$("#ff").onclick = function () { flipped = !flipped; draw(); };
         BQ.$("#fp").onclick = function () { i = (i - 1 + cards.length) % cards.length; flipped = false; draw(); };
         BQ.$("#fn").onclick = function () { i = (i + 1) % cards.length; flipped = false; draw(); };
@@ -145,7 +152,7 @@
           if (box.dataset.done === "1") return; box.dataset.done = "1";
           var pick = Q.opts[+b.dataset.k], ok = pick === Q.a; if (ok) score++;
           BQ.$$(".qopt", box).forEach(function (x) { if (Q.opts[+x.dataset.k] === Q.a) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
-          BQ.$("#qFb").innerHTML = "<p><b>" + (ok ? "✅ Correct" : "❌ The answer is: " + esc(Q.a)) + '</b></p><div class="row"><button class="btn small" data-topic="' + esc(Q.id) + '">Study this point</button><button class="btn gold" id="qNext">Next ▶</button></div>';
+          BQ.$("#qFb").innerHTML = "<p><b>" + (ok ? "✅ Correct" : "❌ The answer is: " + esc(Q.a)) + '</b></p><div class="row">' + (Q.kvq ? '<a class="btn small" href="#/kvq/' + Q.kvq + '">Study this comparison</a>' : '<button class="btn small" data-topic="' + esc(Q.id) + '">Study this point</button>') + '<button class="btn gold" id="qNext">Next ▶</button></div>';
           BQ.$("#qNext").onclick = function () { box.dataset.done = "0"; n++; ask(); };
         };
       });

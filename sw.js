@@ -1,5 +1,5 @@
-const C = 'bq-v1';
-const F = ['./', 'index.html', 'style.css', 'data/topics.js', 'data/quran.json', 'data/bible.json', 'sync.js', 'core.js', 'views.js', 'views2.js', 'app.js', 'manifest.webmanifest',
+const C = 'bq-v2';
+const F = ['./', 'index.html', 'style.css', 'data/topics.js', 'data/compare.js', 'views3.js', 'data/quran.json', 'data/bible.json', 'sync.js', 'core.js', 'views.js', 'views2.js', 'app.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png', 'icons/favicon.png', 'icon.ico'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(C).then((c) => c.addAll(F))); self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
